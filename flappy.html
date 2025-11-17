@@ -1,1 +1,317 @@
-<h1>Game Loaded</h1>
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>Flappy Bird</title>
+<style>
+  body { margin:0; background:#000; display:flex; justify-content:center; align-items:center; height:100vh; }
+  canvas { background:#4ec0ca; border-radius:10px; }
+</style>
+</head>
+<body>
+<canvas id="c" width="320" height="480"></canvas>
+<script>
+const canvas = document.getElementById("c");
+const ctx = canvas.getContext("2d");
+
+let bird = { x:50, y:200, vel:0 };
+let pipes = [];
+let frame = 0;
+let gameOver = false;
+
+function reset() {
+  bird = { x:50, y:200, vel:0 };
+  pipes = [];
+  frame = 0;
+  gameOver = false;
+}
+
+function loop() {
+  if (gameOver) return;
+
+  frame++;
+  ctx.fillStyle="#4ec0ca";
+  ctx.fillRect(0,0,320,480);
+
+  bird.vel += 0.5;
+  bird.y += bird.vel;
+
+  ctx.fillStyle="yellow";
+  ctx.beginPath();
+  ctx.arc(bird.x,bird.y,12,0,Math.PI*2);
+  ctx.fill();
+
+  if (frame % 90===0){
+    let top = Math.random()*200+20;
+    pipes.push({ x:320, top, gap:120 });
+  }
+
+  ctx.fillStyle="green";
+  pipes.forEach(p => {
+    p.x -= 2;
+    ctx.fillRect(p.x,0,40,p.top);
+    ctx.fillRect(p.x,p.top+p.gap,40,480 - (p.top+p.gap));
+
+    if (bird.x > p.x && bird.x < p.x+40 &&
+        (bird.y < p.top || bird.y > p.top+p.gap)) {
+      gameOver = true;
+      alert("GAME OVER");
+      reset();
+    }
+  });
+
+  if (bird.y > 470 || bird.y < 0){
+    gameOver = true;
+    alert("GAME OVER");
+    reset();
+  }
+
+  requestAnimationFrame(loop);
+}
+reset();
+loop();
+
+window.onclick = () => { bird.vel = -7; };
+</script>
+</body>
+</html>
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>Snake</title>
+<style>
+  body { background:#111; margin:0; display:flex; justify-content:center; align-items:center; height:100vh; }
+  canvas { background:#000; border-radius:10px; }
+</style>
+</head>
+<body>
+<canvas id="game" width="320" height="320"></canvas>
+<script>
+const c = document.getElementById("game");
+const ctx = c.getContext("2d");
+
+const size = 16;
+let snake = [{x:10,y:10}];
+let food = {x:15,y:15};
+let dir = {x:1, y:0};
+
+function loop() {
+  ctx.fillStyle="#000";
+  ctx.fillRect(0,0,320,320);
+
+  let head = { x:snake[0].x + dir.x, y:snake[0].y + dir.y };
+  snake.unshift(head);
+
+  if (head.x===food.x && head.y===food.y){
+    food = { x:Math.floor(Math.random()*20), y:Math.floor(Math.random()*20) };
+  } else {
+    snake.pop();
+  }
+
+  if (head.x<0 || head.x>19 || head.y<0 || head.y>19 ||
+      snake.slice(1).some(s=>s.x===head.x && s.y===head.y)) {
+    alert("GAME OVER");
+    snake = [{x:10,y:10}];
+    dir = {x:1,y:0};
+  }
+
+  ctx.fillStyle="#0f0";
+  snake.forEach(s => ctx.fillRect(s.x*size, s.y*size, size-1,size-1));
+
+  ctx.fillStyle="#f00";
+  ctx.fillRect(food.x*size, food.y*size, size-1,size-1);
+
+  setTimeout(loop,100);
+}
+loop();
+
+window.addEventListener("keydown", e=>{
+  if (e.key==="ArrowUp") dir={x:0,y:-1};
+  if (e.key==="ArrowDown") dir={x:0,y:1};
+  if (e.key==="ArrowLeft") dir={x:-1,y:0};
+  if (e.key==="ArrowRight") dir={x:1,y:0};
+});
+</script>
+</body>
+</html>
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>Tetris</title>
+<style>
+  body { background:#222; display:flex; justify-content:center; align-items:center; height:100vh; margin:0; }
+  canvas { background:#111; border-radius:8px; }
+</style>
+</head>
+<body>
+<canvas id="t" width="200" height="400"></canvas>
+<script>
+const c = document.getElementById("t");
+const ctx = c.getContext("2d");
+const size = 20;
+const cols = 10, rows = 20;
+
+let board = Array(rows).fill().map(()=>Array(cols).fill(0));
+let shapes = [
+  [[1,1,1],[0,1,0]], // T
+  [[1,1],[1,1]],     // O
+  [[1,1,0],[0,1,1]], // Z
+  [[0,1,1],[1,1,0]], // S
+  [[1,1,1,1]],       // I
+  [[1,0,0],[1,1,1]], // J
+  [[0,0,1],[1,1,1]]  // L
+];
+
+let cur = randomPiece();
+let pos = {x:3,y:0};
+
+function randomPiece() {
+  return shapes[Math.floor(Math.random()*shapes.length)];
+}
+
+function draw() {
+  ctx.fillStyle="#111";
+  ctx.fillRect(0,0,c.width,c.height);
+
+  for (let y=0;y<rows;y++){
+    for (let x=0;x<cols;x++){
+      if (board[y][x]) {
+        ctx.fillStyle="cyan";
+        ctx.fillRect(x*size, y*size, size-1, size-1);
+      }
+    }
+  }
+
+  ctx.fillStyle="yellow";
+  cur.forEach((row,dy)=>{
+    row.forEach((v,dx)=>{
+      if (v) ctx.fillRect((pos.x+dx)*size,(pos.y+dy)*size,size-1,size-1);
+    });
+  });
+}
+
+function collide(px,py,shape){
+  for (let y=0;y<shape.length;y++){
+    for (let x=0;x<shape[y].length;x++){
+      if (!shape[y][x]) continue;
+      if (py+y>=rows || px+x<0 || px+x>=cols || board[py+y][px+x]) return true;
+    }
+  }
+  return false;
+}
+
+function merge(){
+  cur.forEach((row,dy)=>{
+    row.forEach((v,dx)=>{
+      if(v) board[pos.y+dy][pos.x+dx]=1;
+    });
+  });
+}
+
+function rotate(mat){
+  return mat[0].map((_,i)=>mat.map(r=>r[i]).reverse());
+}
+
+function loop(){
+  pos.y++;
+  if (collide(pos.x,pos.y,cur)){
+    pos.y--;
+    merge();
+    clearLines();
+    cur = randomPiece();
+    pos = { x:3, y:0 };
+    if (collide(pos.x,pos.y,cur)){
+      alert("GAME OVER");
+      board = Array(rows).fill().map(()=>Array(cols).fill(0));
+    }
+  }
+
+  draw();
+  setTimeout(loop,400);
+}
+loop();
+
+function clearLines() {
+  board = board.filter(r => r.some(v=>!v));
+  while (board.length < rows) board.unshift(Array(cols).fill(0));
+}
+
+document.addEventListener("keydown", e=>{
+  if (e.key==="ArrowLeft" && !collide(pos.x-1,pos.y,cur)) pos.x--;
+  if (e.key==="ArrowRight" && !collide(pos.x+1,pos.y,cur)) pos.x++;
+  if (e.key==="ArrowDown") pos.y++;
+  if (e.key==="ArrowUp") {
+    let r = rotate(cur);
+    if (!collide(pos.x,pos.y,r)) cur = r;
+  }
+});
+</script>
+</body>
+</html>
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>TicTacToe</title>
+<style>
+  body { background:#222; display:flex; justify-content:center; align-items:center; height:100vh; color:white; }
+  table { border-collapse: collapse; }
+  td {
+    width: 80px; height: 80px;
+    text-align: center; font-size: 32px;
+    border: 2px solid #fff; cursor: pointer;
+  }
+</style>
+</head>
+<body>
+<div>
+  <h2 style="text-align:center">TicTacToe</h2>
+  <table id="board"></table>
+</div>
+
+<script>
+let turn = "X";
+let board = Array(3).fill().map(()=>Array(3).fill(""));
+
+function drawBoard(){
+  const t = document.getElementById("board");
+  t.innerHTML = "";
+  for (let r=0;r<3;r++){
+    let row = document.createElement("tr");
+    for (let c=0;c<3;c++){
+      let cell = document.createElement("td");
+      cell.innerText = board[r][c];
+      cell.onclick = ()=>move(r,c);
+      row.appendChild(cell);
+    }
+    t.appendChild(row);
+  }
+}
+drawBoard();
+
+function move(r,c){
+  if (board[r][c] !== "") return;
+
+  board[r][c] = turn;
+  turn = turn==="X" ? "O" : "X";
+
+  if (checkWin("X")) alert("X MENANG!");
+  if (checkWin("O")) alert("O MENANG!");
+
+  drawBoard();
+}
+
+function checkWin(p){
+  for (let i=0;i<3;i++){
+    if (board[i][0]===p && board[i][1]===p && board[i][2]===p) return true;
+    if (board[0][i]===p && board[1][i]===p && board[2][i]===p) return true;
+  }
+  if (board[0][0]===p && board[1][1]===p && board[2][2]===p) return true;
+  if (board[0][2]===p && board[1][1]===p && board[2][0]===p) return true;
+  return false;
+}
+</script>
+</body>
+</html>
