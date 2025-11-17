@@ -4,7 +4,6 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>Kisah Sukses Pro — Full Dashboard</title>
-
   <style>
     body { font-family: Arial, Helvetica, sans-serif; background:#f0f2f5; margin:0; padding:20px; }
     h2 { margin:0 0 10px 0; }
@@ -15,14 +14,12 @@
     iframe { width:100%; border-radius:10px; }
   </style>
 </head>
-
 <body>
 
   <div class="grid">
 
-    <!-- LEFT COLUMN -->
+    <!-- LEFT -->
     <div>
-      <!-- AI ASSISTANT -->
       <div class="box">
         <h2>AI Assistant</h2>
         <textarea id="userInput" rows="6" placeholder="Tulis pesan..."></textarea>
@@ -30,7 +27,6 @@
         <div id="response" style="margin-top:10px;"></div>
       </div>
 
-      <!-- GOOGLE SEARCH -->
       <div class="box" style="margin-top:15px">
         <h2>Google Search</h2>
         <input id="gSearch" placeholder="Cari di Google...">
@@ -39,23 +35,20 @@
       </div>
     </div>
 
-    <!-- CENTER COLUMN -->
+    <!-- MIDDLE -->
     <div>
-      <!-- INSTAGRAM -->
       <div class="box">
         <h2>Instagram Viewer</h2>
         <button onclick="loadIG()">Open Instagram</button>
         <div id="igArea" style="margin-top:10px;"></div>
       </div>
 
-      <!-- FACEBOOK -->
       <div class="box" style="margin-top:15px">
         <h2>Facebook Viewer</h2>
         <button onclick="loadFB()">Open Facebook</button>
         <div id="fbArea" style="margin-top:10px;"></div>
       </div>
 
-      <!-- TIKTOK -->
       <div class="box" style="margin-top:15px">
         <h2>TikTok Search</h2>
         <input id="ttSearch" placeholder="Cari TikTok...">
@@ -64,33 +57,28 @@
       </div>
     </div>
 
-    <!-- RIGHT COLUMN -->
+    <!-- RIGHT -->
     <div>
-      <!-- YOUTUBE -->
       <div class="box">
         <h2>YouTube Player + Search</h2>
         <input id="ytSearch" placeholder="Cari video YouTube...">
         <button onclick="searchYouTube()">Search</button>
         <button onclick="randomVideo()">Random</button>
-
         <div style="margin-top:12px;">
           <iframe id="ytPlayer" height="260" src="https://www.youtube.com/embed/dQw4w9WgXcQ" allowfullscreen></iframe>
         </div>
       </div>
 
-      <!-- WEATHER -->
       <div class="box" style="margin-top:15px">
         <h2>Cuaca</h2>
         <div id="weatherArea">Memuat...</div>
       </div>
 
-      <!-- QUOTE -->
-      <div class="box" style="margin-top:15px;">
+      <div class="box" style="margin-top:15px">
         <h2>Quote</h2>
         <div id="quoteArea">Mengambil...</div>
       </div>
 
-      <!-- GAME -->
       <div class="box" style="margin-top:15px">
         <h2>Game</h2>
         <button onclick="window.open('tictactoe.html','_blank')">TicTacToe</button>
